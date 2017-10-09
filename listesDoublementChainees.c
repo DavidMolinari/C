@@ -14,23 +14,29 @@ struct Maillon
 
 };
 void afficheListe(struct Maillon* liste);
-
 void insereApres(int valeur, struct Maillon **ptr);
-
+void supprime(struct Maillon **liste, struct Maillon *ptr);
+struct Maillon * recherche(struct Maillon *liste);
 
 int main(){
 
 struct Maillon *liste;
+
+
 liste = (struct Maillon*) malloc(sizeof(struct Maillon));
 liste->valeur = 3;
 liste->suivant = NULL;
 liste->prec = NULL;
 insereApres(22, &liste);
-
-
 insereApres(12, &liste);
 insereApres(25, &liste);
+afficheListe(liste);
+recherche(&liste);
 
+printf("%d\n",recherche(*liste)->valeur);
+
+
+// TODO : DEBUG RECHERCHE
 afficheListe(liste);
 
 
@@ -61,3 +67,33 @@ void insereApres(int valeur, struct Maillon **ptr){
 		new->prec = *ptr;
 	};
 };
+
+void supprime(struct Maillon **liste, struct Maillon *ptr){
+	if(*liste != NULL){
+		if(ptr == *liste){
+			*liste = ptr->suivant;
+			if(*liste == NULL) (*liste)->prec = NULL;
+			else if(ptr->suivant == NULL) (ptr->prec)->suivant = NULL;
+			else{
+				ptr->suivant->prec = ptr->prec;
+				ptr->prec->suivant = ptr->suivant;
+			}
+			free(ptr);
+		}
+	}
+
+
+}
+
+
+struct Maillon * recherche(struct Maillon *liste){
+	struct Maillon *ptr;
+	struct Maillon *tmp;
+	ptr = liste; tmp = ptr;
+	if(liste == NULL) return NULL;
+	while(ptr != NULL){
+		if(ptr->valeur > tmp->valeur) tmp = ptr;
+	ptr = ptr->suivant;
+	}
+	return tmp;
+}
