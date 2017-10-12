@@ -25,12 +25,13 @@ struct maillon{
 // DECLARATION DE FONCTIONS :
 struct noeud * creerNoeud(int valeur);
 void enfile(struct maillon **debut, struct noeud *n, struct maillon **fin);
-struct noeud * defile(struct maillon **debut, struct maillon **fin);
+struct noeud *defile(struct maillon **debut, struct maillon **fin);
 void affiche(struct maillon* liste);
 void insert(int val, struct noeud **racine);
 void parcours_g_pre(struct noeud *racine);
 void parcours_g_inf(struct noeud *racine);
 void parcours_g_post(struct noeud *racine);
+void parcours_largeur(struct maillon *file, struct maillon *fin);
 struct maillon* defiler(struct maillon **liste);
 
 int main(){
@@ -38,45 +39,48 @@ int main(){
 	struct maillon * debut = NULL;
 	struct maillon * fin = NULL;
 
-	struct noeud * n1 = creerNoeud(4);
-	struct noeud * n3 = creerNoeud(3);
-	struct noeud * n2 = creerNoeud(2);
+struct noeud * n1 = NULL;
 
+	 insert(10, &n1);
+	 insert(5, &n1);
+	 insert(15, &n1);
+	 insert(3, &n1);
+	 insert(8, &n1);
+	 insert(9, &n1);
+	 insert(1, &n1);
+
+/*
 	printf("LISTE :\n");
 	enfile(&debut, n1, &fin);
 	enfile(&debut, n3, &fin);
 	enfile(&debut, n2, &fin);
-	affiche(debut);
+	affiche(debut);*/
 
 
-	printf("\nDEFILADE : \n" );
-	while(debut != NULL){
-		printf("\nAPRES DEFILADE : \n" );
-		defile(&debut, &fin);
-		affiche(debut);
-	}
-	printf("\n ___________________ \n");
+	// printf("\nDEFILADE : \n" );
+	// while(debut != NULL){
+	// 	printf("\nAPRES DEFILADE : \n" );
+	// 	defile(&debut, &fin);
+	// 	affiche(debut);
+	// }
+	// printf("\n ___________________ \n");
 
 
 	// Insertion random values
-	for (int i = 0; i < 20; i++)
-	{
-		insert(rand() % 30, &n1);
-	}
+	// for (int i = 0; i < 5; i++) insert(rand() % 30, &n1);
 
 
-	printf("\n PREFIX : \n");
+
 	parcours_g_pre(n1);
-	printf("\n INFIX : \n");
-	parcours_g_inf(n1);
-	printf("\n POST: \n");
-	parcours_g_post(n1);
-	printf("\n");
+
+printf("\n");
+
+	enfile(&debut, n1, &fin);
+
+	parcours_largeur(debut,fin);
 
 
 };
-
-
 
 void insert(int val, struct noeud **racine){
 	struct noeud * N;
@@ -120,6 +124,27 @@ struct noeud * creerNoeud(int val){
 		return N;
 }
 
+void parcours_largeur(struct maillon *file, struct maillon *fin){
+	if(file!=NULL){
+
+		struct maillon *dd = NULL;
+		struct maillon *ff = NULL;
+		struct noeud * tmp = NULL;
+
+		while(file!=NULL){
+			tmp = defile(&file, &fin);
+			printf("[%d]", tmp->valeur);
+			if(tmp->fg!=NULL){
+				enfile(&dd, tmp->fg, &ff);
+			}
+			if(tmp->fd != NULL){
+				enfile(&dd, tmp->fd, &ff);
+			}
+
+		}
+		if(dd!=NULL) parcours_largeur(dd, ff);
+		}
+}
 
 /*	Specifications : Cas vide => J'ajoute au debut et utilisation de deux pouinteurs
 		Tete et Queue
@@ -141,19 +166,17 @@ void enfile(struct maillon **debut, struct noeud *n, struct maillon **fin){
 
 }
 
-struct noeud * defile(struct maillon **debut, struct maillon **fin){
+struct noeud *defile(struct maillon **debut, struct maillon **fin){
 	if(*debut == NULL){
 		return NULL;
 	}else {
-		struct maillon *result = *debut;
+		struct noeud *result = (*debut)->node;
 		struct maillon *next = (*debut)->suivant;		
 		free(*debut); // Je vire la tete
 		*debut= next;
-		return result->node;
+		return result;
 	}
 }
-
-
 
 // affiche une liste chainee
 void affiche(struct maillon* liste){
@@ -163,6 +186,7 @@ void affiche(struct maillon* liste){
 	}
 }
 
+// Parcours à gauche en Infix
 void parcours_g_pre(struct noeud *racine){
 	if(racine!=NULL){
 		printf("%d|",racine->valeur);

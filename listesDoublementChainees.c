@@ -48,6 +48,7 @@ void afficheListe(struct Maillon* liste){
 		liste = liste->suivant;
 	}
 }
+
 void insereApres(int valeur, struct Maillon **ptr){
 	struct Maillon *new;
 	new = (struct Maillon*) malloc(sizeof(struct Maillon));
